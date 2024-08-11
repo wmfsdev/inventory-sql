@@ -1,12 +1,17 @@
 const express = require("express")
 const router = express.Router()
 
-const tech_controller = require("../controllers/techController")
-const framework_controller = require("../controllers/frameworkController")
-const library_controller = require("../controllers/libraryController")
+const book_controller = require("../controllers/bookController")
 
+router.get('/', book_controller.index)
 
-router.get('/', tech_controller.index)
+router.get('/books', book_controller.book_list)
+
+// router.get('/authors', )
+
+// router.get('/genres',)
+
+// router.get('/bookinstances', )
 
 
 module.exports = router
