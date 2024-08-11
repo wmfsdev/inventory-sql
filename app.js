@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("node:path");
 
+const indexRouter = require('./routes/index')
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -9,8 +10,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-
-app.get("/", (req, res) => res.send("Hello, world!"));
+app.use('/', indexRouter)
 
 app.use((err, req, res, next) => {
     console.error(err);
@@ -18,4 +18,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = 3000;
-app.listen(PORT, () => console.log(`My first Express app - listening on port ${PORT}!`));
+app.listen(PORT);
