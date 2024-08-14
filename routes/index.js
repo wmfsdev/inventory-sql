@@ -7,6 +7,8 @@ router.get('/', book_controller.index)
 
 router.get('/books', book_controller.book_list)
 
+router.get('/books/:id', book_controller.book_detail)
+
 // router.get('/authors', )
 
 // router.get('/genres',)
