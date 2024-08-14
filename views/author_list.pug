@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+
+  if author_list.length
+    ul
+      each author in author_list
+        li
+          a(href=`authors/${author.author_id}`) #{author.full_name}
+          |  (#{author.dob} - 
+          if author.dod != null  
+            |  #{author.dod}
+          else
+            |  Unavailable)
+
+  else
+    p There are no authors.
