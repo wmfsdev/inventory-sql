@@ -17,6 +17,8 @@ router.get('/authors/:id', author_controller.author_detail)
 
 router.get('/genres', genre_controller.genre_list)
 
+router.get('/genres/:id', genre_controller.genre_detail)
+
 // router.get('/bookinstances', )
 
 
