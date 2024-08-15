@@ -1,0 +1,29 @@
+extends layout
+
+block content
+
+  h1 Author: #{author[0].full_name}
+  div.bd_range
+    p #{author[0].dob} -
+      if author[0].dod != null
+        p #{author[0].dod}
+      else
+        p Unavailable
+
+  div(style='margin-left:20px;margin-top:20px')
+
+    h4 Books
+    if author.length
+      dl
+        each book in author
+          dt
+            a(href=`/books/${book.book_id}`) #{book.title}
+          dd #{book.summary}
+    else
+      p This author has no books.
+  
+  hr
+  p
+    a(href=author.url+'/delete') Delete author
+  p
+    a(href=author.url+'/update') Update author
