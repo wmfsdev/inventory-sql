@@ -4,12 +4,12 @@ block content
   h1 Title: #{title}
 
   p #[strong Author: ]
-    a(href="/") #{book.full_name}
+    a(href=`/authors/${book.author_id}`) #{book.full_name}
   p #[strong Summary:] #{book.summary}
   p #[strong ISBN:] #{book.isbn}
   p #[strong Genre: ]
     each val in book.genres
-      a(href="/") #{val} 
+      a(href=`/genres/${book.genre_id}`) #{val} 
       if index < book.genres.length - 1
         |,&nbsp; 
 
