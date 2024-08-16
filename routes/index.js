@@ -4,6 +4,7 @@ const router = express.Router()
 const book_controller = require("../controllers/bookController")
 const author_controller = require("../controllers/authorController")
 const genre_controller = require("../controllers/genreController")
+const bkinstance_controller = require("../controllers/bookinstanceController")
 
 router.get('/', book_controller.index)
 
@@ -19,7 +20,7 @@ router.get('/genres', genre_controller.genre_list)
 
 router.get('/genres/:id', genre_controller.genre_detail)
 
-// router.get('/bookinstances', )
+router.get('/bookinstances', bkinstance_controller.bkinstance_list)
 
 
 module.exports = router
