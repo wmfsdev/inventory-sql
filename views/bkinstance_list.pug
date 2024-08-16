@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title
+
+  if bkinstance_list.length
+    ul
+      each instance in bkinstance_list
+        li
+          a(href=`/bookinstances/${instance.bk_instance_id}`) #{instance.title} : #{instance.imprint} -&nbsp;
+          if instance.status=='Available'
+            span.text-success #{instance.status}
+          else if instance.status=='Maintenance'
+            span.text-danger #{instance.status}
+          else
+            span.text-warning #{instance.status}
+          if instance.status!='Available'
+            span  (Due: #{instance.due_back} )
+    p There can be no book instances if you wish to delete a book.
+  else
+    p There are no book copies in this library.
