@@ -22,5 +22,10 @@ router.get('/genres/:id', genre_controller.genre_detail)
 
 router.get('/bookinstances', bkinstance_controller.bkinstance_list)
 
+router.get('/bookinstances/:id', bkinstance_controller.bkinstance_detail)
+
+router.get('/bookinstances/:id/delete', bkinstance_controller.bkinstance_delete)
+
+
 
 module.exports = router
