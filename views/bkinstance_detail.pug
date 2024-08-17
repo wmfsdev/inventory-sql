@@ -1,0 +1,26 @@
+extends layout
+
+block content
+
+  h1 ID: #{bkinstance.bk_instance_id}
+
+  p #[strong Title: ]
+    a(href=`/books/${bkinstance.book_id}`) #{bkinstance.title}
+  p #[strong Imprint:] #{bkinstance.imprint}
+
+  p #[strong Status: ]
+    if bkinstance.status=='Available'
+      span.text-success #{bkinstance.status}
+    else if bkinstance.status=='Maintenance'
+      span.text-danger #{bkinstance.status}
+    else
+      span.text-warning #{bkinstance.status}
+
+  if bkinstance.status!='Available'
+    p #[strong Due back:] #{bkinstance.due_back}
+
+  p
+    a(href=`/bookinstances/${bkinstance.bk_instance_id}/delete`) Delete Book Instance
+  
+  p
+    a(href=`/bookinstances/${bkinstance.bk_instance_id}/update`) Update Book Instance
