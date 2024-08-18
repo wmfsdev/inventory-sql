@@ -46,3 +46,19 @@ exports.bkinstance_delete = asyncHandler( async(req, res, next) => {
     
     res.redirect('/bookinstances/')
 })
+
+
+exports.auth_bkinstance_list = asyncHandler( async(req, res, next) => {
+
+    const bkinstanceID = req.params.id
+    const text =    `SELECT imprint, TO_CHAR(due_back, 'Mon, dd, YYYY') AS due_back, status, title, bk_instance_id FROM book_instances
+                     INNER JOIN books
+                     ON books.book_id = book_instances.book_id
+                     WHERE books.book_id = $1;`
+    const { rows } = await pool.query(text, [bkinstanceID])
+
+    res.render("bkinstance_list", {
+        title: "Book Instances",
+        bkinstance_list: rows
+    })
+})
