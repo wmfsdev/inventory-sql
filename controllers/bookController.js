@@ -44,7 +44,7 @@ exports.book_detail = asyncHandler( async(req, res, next) => {
 
     const bookID = req.params.id
 
-    const queryOne =   `SELECT title, genres.genre_id, summary, authors.author_id, family_name || ', ' || first_name AS full_name, isbn, 
+    const queryOne =   `SELECT title, books.book_id, genres.genre_id, summary, authors.author_id, family_name || ', ' || first_name AS full_name, isbn, 
                         ARRAY_AGG (name) genres
                         FROM books
                         INNER JOIN authors
@@ -54,7 +54,7 @@ exports.book_detail = asyncHandler( async(req, res, next) => {
                         INNER JOIN genres
                         ON genres.genre_id = books_genre.genre_id
                         WHERE books.book_id = $1
-                        GROUP BY title, genres.genre_id, authors.author_id, family_name, first_name, summary, isbn;`
+                        GROUP BY title, books.book_id, genres.genre_id, authors.author_id, family_name, first_name, summary, isbn;`
 
     const queryTwo =   `SELECT bk_instance_id, imprint, status, TO_CHAR(due_back, 'Mon dd, YYYY') AS due_back FROM book_instances
                         INNER JOIN books
@@ -73,4 +73,29 @@ exports.book_detail = asyncHandler( async(req, res, next) => {
         book: book.rows[0],
         book_instances: bookInstances.rows
     })
+})
+
+exports.book_delete = asyncHandler( async(req, res, next) => {
+    console.log("book delete")
+
+    const bookID = req.params.id
+
+    const text =    `SELECT * FROM book_instances
+                     INNER JOIN books
+                     ON book_instances.book_id = books.book_id
+                     WHERE books.book_id = $1;`
+
+    const { rows } = await pool.query(text, [bookID]) // check for instances
+
+    if (rows.length === 0) {
+
+        const text =    `DELETE FROM books
+                         WHERE book_id = 3;`
+
+        await pool.query(text, [bookID])
+
+        res.redirect('/books/')
+    } else {
+        res.redirect(`/book/bookinstances/${bookID}`)
+    }
 })
