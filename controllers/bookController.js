@@ -90,7 +90,7 @@ exports.book_delete = asyncHandler( async(req, res, next) => {
     if (rows.length === 0) {
 
         const text =    `DELETE FROM books
-                         WHERE book_id = 3;`
+                         WHERE book_id = $1;`
 
         await pool.query(text, [bookID])
 
