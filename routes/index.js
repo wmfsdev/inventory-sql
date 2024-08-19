@@ -28,7 +28,9 @@ router.get('/bookinstances/:id/delete', bkinstance_controller.bkinstance_delete)
 
 router.get('/books/:id/delete', book_controller.book_delete)
 
-
 router.get('/book/bookinstances/:id', bkinstance_controller.auth_bkinstance_list)
+
+
+router.get('/authors/:id/delete', author_controller.author_delete)
 
 module.exports = router
