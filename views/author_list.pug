@@ -8,11 +8,11 @@ block content
       each author in author_list
         li
           a(href=`authors/${author.author_id}`) #{author.full_name}
-          |  (#{author.dob} - 
+          |  #{author.dob} - 
           if author.dod != null  
-            |  #{author.dod}
+            |  #{author.dod} 
           else
-            |  Unavailable)
+            |  Unavailable
 
   else
     p There are no authors.

@@ -2,20 +2,20 @@ extends layout
 
 block content
 
-  h1 Author: #{author[0].full_name}
+  h1 Author: #{author.full_name}
   div.bd_range
-    p #{author[0].dob} -
-      if author[0].dod != null
-        p #{author[0].dod}
+    p #{author.dob} -
+      if author.dod != null
+        p #{author.dod}
       else
         p Unavailable
 
   div(style='margin-left:20px;margin-top:20px')
 
     h4 Books
-    if author.length
+    if books.length
       dl
-        each book in author
+        each book in books
           dt
             a(href=`/books/${book.book_id}`) #{book.title}
           dd #{book.summary}
@@ -25,6 +25,6 @@ block content
   
   hr
   p
-    a(href=`/authors/${author[0].author_id}/delete`) Delete author
+    a(href=`/authors/${author.author_id}/delete`) Delete author
   p
-    a(href=`/authors/${author[0].author_id}/update`) Update author
+    a(href=`/authors/${author.author_id}/update`) Update author
