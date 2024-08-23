@@ -7,7 +7,7 @@ block content
     ul
       each author in author_list
         li
-          a(href=`authors/${author.author_id}`) #{author.full_name}
+          a(href=`/authors/${author.author_id}`) #{author.full_name}
           |  #{author.dob} - 
           if author.dod != null  
             |  #{author.dod} 
