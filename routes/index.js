@@ -36,4 +36,8 @@ router.get('/author/create', author_controller.author_create_get)
 
 router.post('/author/create', author_controller.author_create_post)
 
+router.get('/book/create', book_controller.book_create_get)
+
+router.post('/book/create', book_controller.book_create_post)
+
 module.exports = router
