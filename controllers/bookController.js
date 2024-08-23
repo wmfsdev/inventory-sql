@@ -1,6 +1,7 @@
 
 const asyncHandler = require("express-async-handler")
 const pool = require("../db/pool")
+const { body, validationResult } = require("express-validator")
 
 exports.index = asyncHandler( async(req, res, next) => {
 
@@ -44,17 +45,17 @@ exports.book_detail = asyncHandler( async(req, res, next) => {
 
     const bookID = req.params.id
 
-    const queryOne =   `SELECT title, books.book_id, genres.genre_id, summary, authors.author_id, family_name || ', ' || first_name AS full_name, isbn, 
-                        ARRAY_AGG (name) genres
-                        FROM books
-                        INNER JOIN authors
-                        ON authors.author_id = books.author_id
-                        INNER JOIN books_genre
-                        ON books.book_id = books_genre.book_id
-                        INNER JOIN genres
-                        ON genres.genre_id = books_genre.genre_id
-                        WHERE books.book_id = $1
-                        GROUP BY title, books.book_id, genres.genre_id, authors.author_id, family_name, first_name, summary, isbn;`
+    const queryOne =   `SELECT title, books.book_id,  authors.author_id, summary, authors.author_id, family_name || ', ' || first_name AS full_name, isbn, 
+    ARRAY_AGG (name) genres, ARRAY_AGG (genres.genre_id) genreid
+    FROM books
+    INNER JOIN authors
+    ON authors.author_id = books.author_id
+    INNER JOIN books_genre
+    ON books.book_id = books_genre.book_id
+    INNER JOIN genres
+    ON genres.genre_id = books_genre.genre_id
+    WHERE books.book_id = $1
+    GROUP BY title, books.book_id,  authors.author_id, family_name, first_name, summary, isbn;`
 
     const queryTwo =   `SELECT bk_instance_id, imprint, status, TO_CHAR(due_back, 'Mon dd, YYYY') AS due_back FROM book_instances
                         INNER JOIN books
@@ -67,7 +68,7 @@ exports.book_detail = asyncHandler( async(req, res, next) => {
         await pool.query(queryOne, values),
         await pool.query(queryTwo, values)
     ])
-    console.log(book.rows)
+    console.log(book.rows[0])
     res.render("book_detail", {
         title: book.rows[0].title,
         book: book.rows[0],
@@ -99,3 +100,109 @@ exports.book_delete = asyncHandler( async(req, res, next) => {
         res.redirect(`/book/bookinstances/${bookID}`)
     }
 })
+
+exports.book_create_get = asyncHandler( async(req, res, next) => {
+
+    const queryOne = `SELECT authors.author_id, family_name || ', ' || first_name AS full_name FROM authors;`
+    const queryTwo = `SELECT name, genre_id FROM genres;`
+
+    const [ authors, genres ] = await Promise.all([
+        await pool.query(queryOne),
+        await pool.query(queryTwo)
+    ]) 
+
+    res.render("book_form",{
+        title: "Create Book",
+        authors: authors.rows,
+        genres: genres.rows,
+    })
+})
+
+exports.book_create_post = [
+
+    (req, res, next) => {
+        if (!Array.isArray(req.body.genre)) {
+          req.body.genre =
+            typeof req.body.genre === "undefined" ? [] : [req.body.genre];
+        }
+        next();
+    },
+
+    body("title", "Title must not be empty.")
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body("author", "Author must not be empty.")
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body("summary", "Summary must not be empty.")
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body("isbn", "ISBN must not be empty").trim().isLength({ min: 1 }).escape(),
+    body("genre.*").escape(),
+
+    asyncHandler( async(req, res, next) => {
+
+        const errors = validationResult(req)
+
+        const book = {
+            title: req.body.title,
+            author: req.body.author,
+            summary: req.body.summary,
+            isbn: req.body.isbn,
+            genre: req.body.genre,
+        }
+        console.log(book)
+        if (errors.isEmpty()) {
+
+            const insertBook = `INSERT INTO books (author_id, title, summary, isbn)
+                             VALUES ($1, $2, $3, $4) RETURNING book_id;`
+            const values = [ Number.parseInt(book.author), book.title, book.summary, book.isbn ]
+
+            const { rows } = await pool.query(insertBook, values)
+            
+            if (book.genre.length > 0) {
+                
+                for (let i = 0 ; i < book.genre.length ; i++ ) {
+
+                    const text = `INSERT INTO books_genre (book_id, genre_id)
+                    VALUES ($1, $2);`
+                    const values = [ rows[0].book_id, Number.parseInt(book.genre[i]) ]
+
+                    await pool.query(text, values)
+                }
+
+                res.redirect("/books/")
+            } else {
+                
+                res.redirect("/books/")
+            }
+
+        } else {
+
+            const queryOne = `SELECT author_id, family_name || ', ' || first_name AS full_name FROM authors;`
+            const queryTwo = `SELECT name, genre_id FROM genres;`
+        
+            const [ authors, genres ] = await Promise.all([
+                await pool.query(queryOne),
+                await pool.query(queryTwo)
+            ])
+
+            for (const genre of genres.rows) {
+                if (book.genre === genre.genre_id) {
+                    genre.checked = true
+                }
+            }
+            
+            res.render("book_form", {
+                title: "Create Book",
+                book: book,
+                authors: authors.rows,
+                genres: genres.rows,
+                errors: errors.array()
+            })
+        }
+    })
+]
