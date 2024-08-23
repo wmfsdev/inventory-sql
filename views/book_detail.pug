@@ -8,8 +8,8 @@ block content
   p #[strong Summary:] #{book.summary}
   p #[strong ISBN:] #{book.isbn}
   p #[strong Genre: ]
-    each val in book.genres
-      a(href=`/genres/${book.genre_id}`) #{val} 
+    each val, index in book.genreid
+      a(href=`/genres/${val}`) #{book.genres[index]}
       if index < book.genres.length - 1
         |,&nbsp; 
 
