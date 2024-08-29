@@ -1,0 +1,15 @@
+body {
+    margin: 20px;
+    background-color: rgb(207, 207, 207);
+}
+
+.sidebar-nav {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+
+.bd_range {
+    display: flex;
+    gap: 5px;
+}
