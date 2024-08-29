@@ -44,4 +44,8 @@ router.get('/genre/create', genre_controller.genre_create_get)
 
 router.post('/genre/create', genre_controller.genre_create_post)
 
+router.get('/bookinstance/create', bkinstance_controller.bkinstance_create_get)
+
+router.post('/bookinstance/create', bkinstance_controller.bkinstance_create_post)
+
 module.exports = router
